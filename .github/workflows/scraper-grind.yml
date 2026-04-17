@@ -11,10 +11,10 @@ jobs:
 
     steps:
     - name: Ambil Code dari Repo
-      uses: actions/checkout@v4 # 🔥 UPDATE: dari v3 jadi v4
+      uses: actions/checkout@v4 
 
     - name: Setup Python
-      uses: actions/setup-python@v5 # 🔥 UPDATE: dari v4 jadi v5
+      uses: actions/setup-python@v5 
       with:
         python-version: '3.10'
 
