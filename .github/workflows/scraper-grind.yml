@@ -2,9 +2,8 @@ name: Radar Loker Harian
 
 on:
   schedule:
-    # GitHub pake waktu UTC. Jam 8 pagi WIB = Jam 1 pagi UTC.
     - cron: '0 1 * * *' 
-  workflow_dispatch: # Ini biar lo bisa klik 'Run' manual buat ngetes
+  workflow_dispatch: 
 
 jobs:
   run-scraper:
@@ -12,12 +11,12 @@ jobs:
 
     steps:
     - name: Ambil Code dari Repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4 # 🔥 UPDATE: dari v3 jadi v4
 
     - name: Setup Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5 # 🔥 UPDATE: dari v4 jadi v5
       with:
-        python-version: '3.10' # Sesuaikan kalau lo pake versi lain
+        python-version: '3.10'
 
     - name: Install Library
       run: |
@@ -26,7 +25,6 @@ jobs:
 
     - name: Eksekusi Pencarian Loker 🚀
       env:
-        # Ini narik kunci yang tadi lo simpen di brankas (Secrets)
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       run: |

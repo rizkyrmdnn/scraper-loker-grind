@@ -1,8 +1,7 @@
 import os
 import requests
 
-# === KONFIGURASI BOT TELEGRAM (KUNCI RAHASIA LO) ===
-# Ganti dengan API Token dan Chat ID yang lo simpan di Notepad tadi
+# === KONFIGURASI BOT TELEGRAM ===
 BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
 
