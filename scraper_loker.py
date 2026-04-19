@@ -1,3 +1,5 @@
+# Script Pencari Loker Pake API Remotive
+
 import os
 import requests
 
@@ -30,7 +32,7 @@ def cari_loker_beneran():
     print("🤖 Menarik data loker Data Engineer beneran dari API...")
     
     # Endpoint API gratis dari Remotive khusus keyword "data engineer"
-    # Lo bisa ganti parameter search-nya nanti (misal: cloud%20engineer)
+    # Bisa diubah parameter search-nya nanti (misal: cloud%20engineer)
     api_url = "https://remotive.com/api/remote-jobs?search=data%20engineer&limit=10"
 
     try:
@@ -41,7 +43,7 @@ def cari_loker_beneran():
         if jobs:
             pesan_wa = "🔥 <b>RADAR LOKER TECH (REAL DATA)</b> 🔥\n\nBro, ini loker Data Engineer terbaru yang gue tarik dari API:\n\n"
             
-            # Kita ambil 3 loker teratas aja biar pesan Telegram lo nggak nyepam kepanjangan
+            # Ambil 3 loker teratas 
             for job in jobs[:3]:
                 posisi = job.get('title', 'Posisi tidak diketahui')
                 perusahaan = job.get('company_name', 'Perusahaan tidak diketahui')
