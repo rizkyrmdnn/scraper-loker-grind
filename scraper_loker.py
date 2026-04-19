@@ -11,7 +11,9 @@ def kirim_pesan_telegram(pesan):
     payload = {
         "chat_id": CHAT_ID,
         "text": pesan,
-        "parse_mode": "Markdown" # Biar bisa pakai format tebal (*), miring (_), dll
+        # PRO TIP: Pake HTML lebih aman dari Markdown di Telegram biar nggak error 
+        # kalau ketemu karakter aneh kayak kurung () atau strip - di judul loker
+        "parse_mode": "HTML" 
     }
     
     try:
@@ -21,39 +23,47 @@ def kirim_pesan_telegram(pesan):
         else:
             print("❌ Gagal ngirim pesan, cek lagi token/chat ID:", response.text)
     except Exception as e:
-        print("🚨 Error koneksi:", e)
+        print("🚨 Error koneksi Telegram:", e)
 
-def cari_loker():
-    """
-    Fungsi utama buat narik data loker.
-    (Di sini gue pakai simulasi data dummy biar lo bisa tes bot-nya dulu).
-    """
-    print("🤖 Bot sedang mencari loker Data/Cloud Engineer...")
+def cari_loker_beneran():
+    """Fungsi utama buat hit API loker dan ngolah JSON-nya"""
+    print("🤖 Menarik data loker Data Engineer beneran dari API...")
     
-    # Nanti bagian ini bisa lo ganti pakai requests.get() ke API portal loker beneran, 
-    # atau pakai BeautifulSoup buat scraping web HTML.
-    
-    # --- SIMULASI HASIL SCRAPING ---
-    loker_ditemukan = [
-        {"posisi": "Junior Data Engineer", "kantor": "Tokopedia", "link": "https://careers.tokopedia.com/"},
-        {"posisi": "Cloud Engineer (Fresh Grad)", "kantor": "Gojek", "link": "https://gojek.com/careers/"}
-    ]
+    # Endpoint API gratis dari Remotive khusus keyword "data engineer"
+    # Lo bisa ganti parameter search-nya nanti (misal: cloud%20engineer)
+    api_url = "https://remotive.com/api/remote-jobs?search=data%20engineer&limit=10"
 
-    # Kalau ada loker yang match sama keyword lo
-    if loker_ditemukan:
-        pesan_wa = "🔥 *RADAR LOKER ON THE GRIND* 🔥\n\nBro, ada loker baru nih:\n\n"
-        
-        for loker in loker_ditemukan:
-            pesan_wa += f"💼 *Posisi:* {loker['posisi']}\n"
-            pesan_wa += f"🏢 *Perusahaan:* {loker['kantor']}\n"
-            pesan_wa += f"🔗 *Apply di sini:* [Link Pendaftaran]({loker['link']})\n\n"
+    try:
+        response = requests.get(api_url)
+        data = response.json() # Ekstrak response jadi bentuk JSON (Dictionary Python)
+        jobs = data.get('jobs', [])
+
+        if jobs:
+            pesan_wa = "🔥 <b>RADAR LOKER TECH (REAL DATA)</b> 🔥\n\nBro, ini loker Data Engineer terbaru yang gue tarik dari API:\n\n"
             
-        pesan_wa += "Langsung sikat bro, jangan ditunda! 🚀"
-        
-        # Suruh bot kirim pesan
-        kirim_pesan_telegram(pesan_wa)
-    else:
-        print("Belum ada loker baru yang cocok hari ini.")
+            # Kita ambil 3 loker teratas aja biar pesan Telegram lo nggak nyepam kepanjangan
+            for job in jobs[:3]:
+                posisi = job.get('title', 'Posisi tidak diketahui')
+                perusahaan = job.get('company_name', 'Perusahaan tidak diketahui')
+                lokasi = job.get('candidate_required_location', 'Global/Remote')
+                link = job.get('url', '')
+
+                pesan_wa += f"💼 <b>Posisi:</b> {posisi}\n"
+                pesan_wa += f"🏢 <b>Perusahaan:</b> {perusahaan}\n"
+                pesan_wa += f"🌍 <b>Syarat Lokasi:</b> {lokasi}\n"
+                pesan_wa += f"🔗 <b>Apply:</b> <a href='{link}'>Klik di Sini</a>\n\n"
+                
+            pesan_wa += "Sikat bro, ON THE GRIND! 🚀"
+            
+            # Eksekusi kirim pesan
+            kirim_pesan_telegram(pesan_wa)
+            print("✅ Data loker sukses ditarik dan dikirim!")
+            
+        else:
+            print("Belum ada loker baru yang cocok dari API hari ini.")
+            
+    except Exception as e:
+        print("🚨 Gagal hit API loker:", e)
 
 if __name__ == "__main__":
-    cari_loker()
+    cari_loker_beneran()
